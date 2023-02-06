@@ -16,6 +16,12 @@ export class ProjectStack extends Stack {
       partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
       removalPolicy: RemovalPolicy.DESTROY,
       tableName: "ddb-table-users",
+
+      // Add Global Table Replication to Region(s):
+      // Uncomment following two(2) lines:
+      // --------------------------------------
+      // replicationRegions: ["eu-west-2"],
+      // stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
 
     //define lambda function and regeference function file
