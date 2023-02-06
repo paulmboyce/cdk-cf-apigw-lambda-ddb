@@ -7,7 +7,7 @@ const AWS = AWSXRay.captureAWS(AWSSDK);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
 //define table by variable passed from stack
-const table = process.env.DYNAMODB || "undefined";
+const table = process.env.DYNAMODB_TABLE_NAME || "undefined";
 
 //define table in params
 const params = {

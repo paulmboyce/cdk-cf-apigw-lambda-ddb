@@ -12,16 +12,19 @@ export class ProjectStack extends Stack {
     super(scope, id, props);
 
     //define dynamodb table
-    const dynamodb_table = new dynamodb.Table(this, "Table", {
+    const dynamodb_table = new dynamodb.Table(this, "DynamoDB Table", {
       partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
       removalPolicy: RemovalPolicy.DESTROY,
+      tableName: "ddb-table-users",
     });
 
     //define lambda function and regeference function file
-    const lambda_backend = new NodejsFunction(this, "function", {
+    const lambda_backend = new NodejsFunction(this, "Function lambda-scan", {
       tracing: lambda.Tracing.ACTIVE,
+      functionName: "lambda-scan-name",
+      entry: "lib/project-stack.lambda-scan.ts",
       environment: {
-        DYNAMODB: dynamodb_table.tableName,
+        DYNAMODB_TABLE_NAME: dynamodb_table.tableName,
       },
     });
 
@@ -29,11 +32,12 @@ export class ProjectStack extends Stack {
     dynamodb_table.grantReadData(lambda_backend.role!);
 
     //define apigateway
-    const api = new apigateway.RestApi(this, "RestAPI", {
+    const api = new apigateway.RestApi(this, "Scanner Rest API", {
       deployOptions: {
         dataTraceEnabled: true,
         tracingEnabled: true,
       },
+      restApiName: "api-scan-users",
     });
 
     //define endpoint and associate it with lambda backend
